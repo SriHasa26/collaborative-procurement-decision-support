@@ -1,0 +1,220 @@
+{
+  "log": [
+    {
+      "commodity": "tomato",
+      "start_date": "2025-09-01",
+      "end_date": "2025-09-07",
+      "attempt": 1,
+      "status": 504,
+      "elapsed_seconds": 60.6,
+      "bytes": 176,
+      "outcome": "failed",
+      "error_body": "<html>\r\n<head><title>504 Gateway Time-out</title></head>\r\n<body>\r\n<center><h1>504 Gateway Time-out</h1></center>\r\n<hr><center>nginx/1.24.0 (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
+    },
+    {
+      "commodity": "tomato",
+      "start_date": "2025-09-01",
+      "end_date": "2025-09-07",
+      "attempt": 2,
+      "status": null,
+      "elapsed_seconds": 21.1,
+      "bytes": 215,
+      "outcome": "failed",
+      "error_body": "<urlopen error [WinError 10060] A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has fai"
+    },
+    {
+      "commodity": "tomato",
+      "start_date": "2025-09-01",
+      "end_date": "2025-09-07",
+      "attempt": 3,
+      "status": 504,
+      "elapsed_seconds": 60.2,
+      "bytes": 176,
+      "outcome": "failed",
+      "error_body": "<html>\r\n<head><title>504 Gateway Time-out</title></head>\r\n<body>\r\n<center><h1>504 Gateway Time-out</h1></center>\r\n<hr><center>nginx/1.24.0 (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
+    },
+    {
+      "commodity": "tomato",
+      "start_date": "2025-08-02",
+      "end_date": "2025-08-31",
+      "attempt": 1,
+      "status": 504,
+      "elapsed_seconds": 60.5,
+      "bytes": 176,
+      "outcome": "failed",
+      "error_body": "<html>\r\n<head><title>504 Gateway Time-out</title></head>\r\n<body>\r\n<center><h1>504 Gateway Time-out</h1></center>\r\n<hr><center>nginx/1.24.0 (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
+    },
+    {
+      "commodity": "tomato",
+      "start_date": "2025-08-02",
+      "end_date": "2025-08-31",
+      "attempt": 2,
+      "status": 504,
+      "elapsed_seconds": 60.2,
+      "bytes": 176,
+      "outcome": "failed",
+      "error_body": "<html>\r\n<head><title>504 Gateway Time-out</title></head>\r\n<body>\r\n<center><h1>504 Gateway Time-out</h1></center>\r\n<hr><center>nginx/1.24.0 (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
+    },
+    {
+      "commodity": "tomato",
+      "start_date": "2025-08-02",
+      "end_date": "2025-08-31",
+      "attempt": 3,
+      "status": 504,
+      "elapsed_seconds": 60.3,
+      "bytes": 176,
+      "outcome": "failed",
+      "error_body": "<html>\r\n<head><title>504 Gateway Time-out</title></head>\r\n<body>\r\n<center><h1>504 Gateway Time-out</h1></center>\r\n<hr><center>nginx/1.24.0 (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
+    },
+    {
+      "commodity": "potato",
+      "start_date": "2025-09-01",
+      "end_date": "2025-09-07",
+      "attempt": 1,
+      "status": 200,
+      "elapsed_seconds": 53.2,
+      "bytes": 864,
+      "outcome": "success"
+    },
+    {
+      "commodity": "potato",
+      "start_date": "2025-08-02",
+      "end_date": "2025-08-31",
+      "attempt": 1,
+      "status": 500,
+      "elapsed_seconds": 25.2,
+      "bytes": 56,
+      "outcome": "failed",
+      "error_body": "{\"error\":\"Error accessing the prices from the database\"}"
+    },
+    {
+      "commodity": "potato",
+      "start_date": "2025-08-02",
+      "end_date": "2025-08-31",
+      "attempt": 2,
+      "status": 200,
+      "elapsed_seconds": 24.6,
+      "bytes": 3896,
+      "outcome": "success"
+    },
+    {
+      "commodity": "potato",
+      "start_date": "2025-07-03",
+      "end_date": "2025-08-01",
+      "attempt": 1,
+      "status": 200,
+      "elapsed_seconds": 0.4,
+      "bytes": 3397,
+      "outcome": "success"
+    },
+    {
+      "commodity": "potato",
+      "start_date": "2025-06-03",
+      "end_date": "2025-07-02",
+      "attempt": 1,
+      "status": 200,
+      "elapsed_seconds": 0.3,
+      "bytes": 3356,
+      "outcome": "success"
+    },
+    {
+      "commodity": "potato",
+      "start_date": "2025-05-04",
+      "end_date": "2025-06-02",
+      "attempt": 1,
+      "status": 200,
+      "elapsed_seconds": 0.3,
+      "bytes": 3905,
+      "outcome": "success"
+    },
+    {
+      "commodity": "potato",
+      "start_date": "2025-04-04",
+      "end_date": "2025-05-03",
+      "attempt": 1,
+      "status": 200,
+      "elapsed_seconds": 0.3,
+      "bytes": 3805,
+      "outcome": "success"
+    },
+    {
+      "commodity": "potato",
+      "start_date": "2025-03-05",
+      "end_date": "2025-04-03",
+      "attempt": 1,
+      "status": 200,
+      "elapsed_seconds": 0.3,
+      "bytes": 4057,
+      "outcome": "success"
+    }
+  ],
+  "results": {
+    "tomato": [
+      {
+        "label": "test",
+        "start": "2025-09-01",
+        "end": "2025-09-07",
+        "records": 0,
+        "file": null
+      },
+      {
+        "label": "30d-1",
+        "start": "2025-08-02",
+        "end": "2025-08-31",
+        "records": 0,
+        "file": null
+      }
+    ],
+    "potato": [
+      {
+        "label": "test",
+        "start": "2025-09-01",
+        "end": "2025-09-07",
+        "records": 7,
+        "file": "C:\\Users\\Yagna Sri Hasa Telu\\OneDrive\\Desktop\\react projects\\mini project\\data\\raw\\ceda\\potato_hyderabad_2025-09-01_2025-09-07.json"
+      },
+      {
+        "label": "30d-1",
+        "start": "2025-08-02",
+        "end": "2025-08-31",
+        "records": 29,
+        "file": "C:\\Users\\Yagna Sri Hasa Telu\\OneDrive\\Desktop\\react projects\\mini project\\data\\raw\\ceda\\potato_hyderabad_2025-08-02_2025-08-31.json"
+      },
+      {
+        "label": "30d-2",
+        "start": "2025-07-03",
+        "end": "2025-08-01",
+        "records": 28,
+        "file": "C:\\Users\\Yagna Sri Hasa Telu\\OneDrive\\Desktop\\react projects\\mini project\\data\\raw\\ceda\\potato_hyderabad_2025-07-03_2025-08-01.json"
+      },
+      {
+        "label": "30d-3",
+        "start": "2025-06-03",
+        "end": "2025-07-02",
+        "records": 28,
+        "file": "C:\\Users\\Yagna Sri Hasa Telu\\OneDrive\\Desktop\\react projects\\mini project\\data\\raw\\ceda\\potato_hyderabad_2025-06-03_2025-07-02.json"
+      },
+      {
+        "label": "30d-4",
+        "start": "2025-05-04",
+        "end": "2025-06-02",
+        "records": 29,
+        "file": "C:\\Users\\Yagna Sri Hasa Telu\\OneDrive\\Desktop\\react projects\\mini project\\data\\raw\\ceda\\potato_hyderabad_2025-05-04_2025-06-02.json"
+      },
+      {
+        "label": "30d-5",
+        "start": "2025-04-04",
+        "end": "2025-05-03",
+        "records": 28,
+        "file": "C:\\Users\\Yagna Sri Hasa Telu\\OneDrive\\Desktop\\react projects\\mini project\\data\\raw\\ceda\\potato_hyderabad_2025-04-04_2025-05-03.json"
+      },
+      {
+        "label": "30d-6",
+        "start": "2025-03-05",
+        "end": "2025-04-03",
+        "records": 29,
+        "file": "C:\\Users\\Yagna Sri Hasa Telu\\OneDrive\\Desktop\\react projects\\mini project\\data\\raw\\ceda\\potato_hyderabad_2025-03-05_2025-04-03.json"
+      }
+    ]
+  }
+}

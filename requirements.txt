@@ -1,0 +1,20 @@
+# Backend/core dependencies for the AI-Driven Collaborative Procurement Decision System.
+#
+# networkx -- added in Phase 6C for the group-formation compatibility graph
+#             (connected components, per Phase 2B's graph-based design,
+#             reports/phase6c_group_formation_report.md).
+# pytest    -- already an implicit dependency of the test suite since
+#              Phase 6A; formalized here for completeness, not a new
+#              addition in Phase 6C.
+# fastapi   -- added in Phase 6F for the HTTP/API boundary layer only
+#              (backend/api/); pulls in pydantic (already used for API
+#              request/response validation) as its own transitive
+#              dependency, so pydantic is not pinned separately here.
+# httpx     -- added in Phase 6F; required by Starlette's TestClient
+#              (used in tests/api/) to issue in-process HTTP requests
+#              against the FastAPI app -- a genuine test dependency, not
+#              an unrelated addition.
+networkx>=3.0
+pytest>=7.0
+fastapi>=0.100.0
+httpx>=0.24.0
