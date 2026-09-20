@@ -1,0 +1,634 @@
+/* Phase 7B -- reusable component styles. Requires variables.css.
+   UI-1 -- Button gains ghost/danger variants plus explicit active/disabled
+   states and an optional loading spinner; Card gains elevated/interactive/
+   highlighted variants (see reports/ui1_design_system_and_frontend_foundation.md
+   Sections 8-10). Every existing class name/selector is preserved --
+   .btn-primary/.btn-secondary/.btn-outline and bare .card look and behave
+   exactly as before unless a NEW class is added alongside them. */
+
+/* ---------------------------------------------------------------------
+   Button
+   --------------------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: 10px var(--spacing-lg);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast),
+    color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+  white-space: nowrap;
+}
+
+.btn:hover {
+  text-decoration: none;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+/* Explicit disabled state (Phase 7B relied on plain browser UA styling,
+   which is inconsistent across browsers) -- pointer-events: none also
+   means no hover/active state can visually fire on a disabled button. */
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
+  transform: none;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: var(--color-text-on-primary);
+  box-shadow: var(--shadow-primary);
+}
+
+.btn-primary:hover {
+  background: var(--color-primary-hover);
+}
+
+.btn-secondary {
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-strong);
+}
+
+.btn-secondary:hover {
+  background: var(--color-surface-alt);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.btn-outline:hover {
+  background: var(--color-primary-light);
+}
+
+/* UI-1 -- new: a minimal, borderless variant for a lower-emphasis action
+   sitting next to a primary one (e.g. a "Cancel" beside a "Save"). */
+.btn-ghost {
+  background: transparent;
+  color: var(--color-text-secondary);
+}
+
+.btn-ghost:hover {
+  background: var(--color-surface-alt);
+  color: var(--color-text-primary);
+}
+
+/* UI-1 -- new: for a destructive action. Not used by any existing page
+   yet (there is no delete/destructive action anywhere in this
+   application today) -- established now so a future phase never has to
+   invent a one-off red button style. */
+.btn-danger {
+  background: var(--color-danger);
+  color: var(--color-text-on-primary);
+}
+
+.btn-danger:hover {
+  background: #941818;
+}
+
+/* UI-1 -- optional loading state (Button's new `isLoading` prop). The
+   spinner reuses the exact same visual as LoadingState's .spinner below,
+   sized to sit inline in a button. */
+.btn-spinner {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  opacity: 0.85;
+  animation: spin 800ms linear infinite;
+  flex-shrink: 0;
+}
+
+/* ---------------------------------------------------------------------
+   Card
+   --------------------------------------------------------------------- */
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-base), border-color var(--transition-base),
+    transform var(--transition-base);
+}
+
+/* UI-1 -- new Card variants (Card's optional `variant` prop). Bare .card
+   (variant="standard", the default) is pixel-identical to Phase 7B. */
+
+.card-elevated {
+  box-shadow: var(--shadow-md);
+  border-color: transparent;
+}
+
+.card-interactive {
+  cursor: pointer;
+}
+
+.card-interactive:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-border-strong);
+  transform: translateY(-2px);
+}
+
+.card-interactive:focus-visible {
+  box-shadow: var(--shadow-focus);
+  outline: none;
+}
+
+.card-highlighted {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+}
+
+/* ---------------------------------------------------------------------
+   Badge (generic) + StatusBadge / DecisionStateBadge variants
+   --------------------------------------------------------------------- */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  line-height: 1;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.badge-icon {
+  font-size: var(--font-size-xs);
+  line-height: 1;
+}
+
+.badge-neutral {
+  background: var(--color-surface-alt);
+  color: var(--color-text-secondary);
+  border-color: var(--color-border);
+}
+
+.badge-success {
+  background: var(--color-success-light);
+  color: var(--color-success);
+  border-color: var(--color-success-border);
+}
+
+.badge-warning {
+  background: var(--color-warning-light);
+  color: var(--color-warning);
+  border-color: var(--color-warning-border);
+}
+
+.badge-danger {
+  background: var(--color-danger-light);
+  color: var(--color-danger);
+  border-color: var(--color-danger-border);
+}
+
+.badge-info {
+  background: var(--color-info-light);
+  color: var(--color-info);
+  border-color: var(--color-info-border);
+}
+
+/* ---------------------------------------------------------------------
+   PageHeader
+   --------------------------------------------------------------------- */
+
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+.page-header-text {
+  max-width: 640px;
+}
+
+.page-header-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-shrink: 0;
+}
+
+/* ---------------------------------------------------------------------
+   EmptyState / LoadingState / ErrorState
+   --------------------------------------------------------------------- */
+
+.empty-state,
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-2xl) var(--spacing-lg);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.error-state {
+  border-style: solid;
+  border-color: var(--color-danger-border);
+  background: var(--color-danger-light);
+}
+
+.empty-state-icon,
+.error-state-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-alt);
+  font-size: var(--font-size-xl);
+  margin-bottom: var(--spacing-xs);
+}
+
+.error-state-icon {
+  background: var(--color-danger-light);
+  color: var(--color-danger);
+}
+
+.empty-state-title,
+.error-state-title {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.empty-state-description,
+.error-state-description {
+  max-width: 440px;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  margin: 0;
+}
+
+.empty-state-actions {
+  margin-top: var(--spacing-sm);
+}
+
+.loading-state {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-lg);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  animation: spin 800ms linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------------------------------------------------------------------
+   Hero (HomePage)
+   --------------------------------------------------------------------- */
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  max-width: 760px;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+}
+
+.trust-note {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: flex-start;
+  padding: var(--spacing-md);
+  border: 1px solid var(--color-info-border);
+  background: var(--color-info-light);
+  border-radius: var(--radius-md);
+  max-width: 720px;
+}
+
+.trust-note-icon {
+  color: var(--color-info);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* ---------------------------------------------------------------------
+   Workflow steps
+   --------------------------------------------------------------------- */
+
+.workflow-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+.workflow-step {
+  flex: 1 1 160px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  position: relative;
+}
+
+.workflow-step-index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+}
+
+@media (max-width: 768px) {
+  .workflow-steps {
+    flex-direction: column;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   Decision-state cards grid (Home page transparency section)
+   --------------------------------------------------------------------- */
+
+.decision-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.decision-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.decision-card-summary {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+/* ---------------------------------------------------------------------
+   Generic card header row (title + badge/action, wraps on narrow screens)
+   --------------------------------------------------------------------- */
+
+.card-header-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+}
+
+/* ---------------------------------------------------------------------
+   Section placeholder panels (Analysis page)
+   --------------------------------------------------------------------- */
+
+.placeholder-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-alt);
+}
+
+/* ---------------------------------------------------------------------
+   History table (empty state with real headers)
+   --------------------------------------------------------------------- */
+
+.history-table-wrapper {
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+}
+
+.history-table th {
+  text-align: left;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-surface-alt);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.history-table td {
+  padding: var(--spacing-md);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+/* ---------------------------------------------------------------------
+   Backend connectivity diagnostic (Phase 7A component, restyled only)
+   --------------------------------------------------------------------- */
+
+.backend-status-check {
+  margin-top: 0;
+  max-width: 480px;
+}
+
+.backend-status-check-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-xs);
+}
+
+.not-found-code {
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1;
+}
+
+.plain-list {
+  margin: var(--spacing-sm) 0 0;
+  padding-left: 1.2em;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+/* ---------------------------------------------------------------------
+   Section container helper
+   --------------------------------------------------------------------- */
+
+.page-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  /* min-width: 0 is applied generally to every direct child of
+     .app-content-inner (see layout.css) -- covers this class too. */
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+  }
+
+  .page-header-actions {
+    width: 100%;
+  }
+
+  .page-header-actions .btn {
+    width: 100%;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   UI-1 -- Form primitives (components/ui/). Not used by any existing page
+   yet (the analysis/auth forms are untouched this phase) -- visually
+   identical to analysis.css's existing `.form-field input`/`select`
+   styling, under standalone classes so they also work outside a
+   `.form-field` wrapper. A future page adopting Input/Select/Textarea
+   looks like the same product, not a second visual language.
+   --------------------------------------------------------------------- */
+
+.ui-input,
+.ui-select,
+.ui-textarea {
+  padding: 8px var(--spacing-sm);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  width: 100%;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.ui-textarea {
+  resize: vertical;
+  min-height: 96px;
+}
+
+.ui-input:hover,
+.ui-select:hover,
+.ui-textarea:hover {
+  border-color: var(--color-text-muted);
+}
+
+.ui-input:focus-visible,
+.ui-select:focus-visible,
+.ui-textarea:focus-visible {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-focus);
+}
+
+.ui-input:disabled,
+.ui-select:disabled,
+.ui-textarea:disabled {
+  background: var(--color-surface-alt);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+.ui-input.has-error,
+.ui-select.has-error,
+.ui-textarea.has-error {
+  border-color: var(--color-danger);
+}
+
+/* ---------------------------------------------------------------------
+   UI-10 -- `.divider` (UI-1's Divider.jsx) removed: confirmed via a
+   repo-wide grep to have zero callers (Divider.jsx was never adopted by
+   any page) and deleted as part of this phase's final dead-code audit --
+   see reports/ui10_final_product_audit.md.
+   --------------------------------------------------------------------- */
+
+/* ---------------------------------------------------------------------
+   UI-8 -- Tooltip (Tooltip.jsx). Click/tap toggles (mobile-friendly,
+   never hover-only); Escape closes; the bubble is a real element with
+   role="tooltip" connected via aria-describedby, not a native `title`.
+   --------------------------------------------------------------------- */
+
+.tooltip-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip-trigger {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: help;
+  border-bottom: 1px dotted var(--color-text-muted);
+}
+
+.tooltip-bubble {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 6px;
+  padding: 4px 8px;
+  background: var(--color-midnight);
+  color: var(--color-text-on-dark);
+  font-size: var(--font-size-xs);
+  line-height: 1.4;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  max-width: 60vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  z-index: var(--z-tooltip);
+  pointer-events: none;
+  animation: fade-in-up 120ms var(--ease-standard) both;
+}

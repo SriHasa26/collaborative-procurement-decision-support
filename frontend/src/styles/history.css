@@ -1,0 +1,164 @@
+/* UI-6 -- styles specific to the premium Procurement History page
+   (/history). Reuses UI-1..UI-5 tokens and classes throughout (.card,
+   .card-interactive, .badge, .text-*, .skeleton-block, .empty-state) --
+   only the additions genuinely needed for this page's own layout live
+   here, matching the same "reuse, extend, never duplicate" convention
+   results.css/dashboard.css already established. */
+
+.history-overview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-md);
+}
+
+.history-overview-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* ---------------------------------------------------------------------
+   Toolbar (search + decision filter)
+   --------------------------------------------------------------------- */
+
+.history-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+
+.history-toolbar-field {
+  min-width: 200px;
+  flex: 1 1 220px;
+}
+
+.history-toolbar-field .ui-select {
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .history-toolbar-field {
+    flex-basis: 100%;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   Run list / rows
+   --------------------------------------------------------------------- */
+
+.run-history-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.run-history-row-button {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-md);
+  font: inherit;
+  text-align: left;
+  color: inherit;
+}
+
+.run-history-row-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.run-history-row-button:disabled:hover {
+  transform: none;
+  box-shadow: var(--shadow-sm);
+  border-color: var(--color-border);
+}
+
+.run-history-row.is-pending .run-history-row-button {
+  border-color: var(--color-primary);
+}
+
+.run-history-row-primary {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.run-history-row-primary .card-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.run-history-row-decision {
+  flex: 0 0 auto;
+}
+
+.run-history-row-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 0 0 auto;
+  min-width: 90px;
+}
+
+.run-history-row-savings {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-success);
+}
+
+.run-history-row-action {
+  flex: 0 0 auto;
+  margin-left: auto;
+  color: var(--color-primary);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+}
+
+.run-history-row-note {
+  margin: var(--spacing-xs) 0 0 var(--spacing-md);
+}
+
+@media (max-width: 900px) {
+  .run-history-row-button {
+    justify-content: flex-start;
+  }
+
+  .run-history-row-action {
+    margin-left: 0;
+    flex-basis: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .run-history-row-button {
+    padding: var(--spacing-md);
+  }
+
+  .run-history-row-metric {
+    min-width: 0;
+    flex: 1 1 45%;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   Loading skeleton
+   --------------------------------------------------------------------- */
+
+.history-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.history-skeleton-row {
+  height: 84px;
+  border-radius: var(--radius-lg);
+}

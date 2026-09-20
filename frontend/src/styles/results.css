@@ -1,0 +1,659 @@
+/* Phase 7E -- styles specific to the Results Dashboard. Reuses Phase 7B's
+   tokens (variables.css) and base component classes (.card, .badge,
+   .history-table, .text-*) -- only the additions genuinely needed for the
+   dashboard layout live here. */
+
+.run-status-card .card-header-row {
+  align-items: center;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.metric-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.metric-card-value {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* UI-1 -- MetricCard's optional tone="emphasis" (not used by any current
+   call site -- see MetricCard.jsx's own comment). */
+.metric-card-emphasis {
+  border-color: var(--color-primary);
+}
+
+.metric-card-emphasis .metric-card-value {
+  font-size: var(--font-size-3xl);
+  color: var(--color-primary);
+}
+
+/* UI-3 -- MetricCard's optional `hint` line (a dashboard KPI honestly
+   explaining why its value is "—"). */
+.metric-card-hint {
+  margin-top: -2px;
+}
+
+.selected-group-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.selected-group-card {
+  border-color: var(--color-success-border);
+}
+
+.selected-group-savings {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-success);
+  margin: var(--spacing-xs) 0;
+}
+
+.savings-summary-card {
+  border-color: var(--color-success-border);
+  background: var(--color-success-light);
+}
+
+.savings-summary-value {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--color-success);
+  margin: 4px 0 var(--spacing-xs);
+}
+
+.vendor-outcomes-explanation,
+.group-decision-explanation {
+  max-width: 320px;
+  color: var(--color-text-secondary);
+}
+
+.group-decision-table tr.is-selected-row {
+  background: var(--color-success-light);
+}
+
+.formation-pool {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-alt);
+}
+
+.formation-pool + .formation-pool {
+  margin-top: var(--spacing-sm);
+}
+
+.formation-pool summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.results-run-id {
+  margin-top: calc(-1 * var(--spacing-sm));
+}
+
+/* ---------------------------------------------------------------------
+   UI-5 -- Decision Hero (DecisionHero.jsx)
+   --------------------------------------------------------------------- */
+
+.decision-hero {
+  background: linear-gradient(160deg, var(--color-midnight) 0%, var(--color-midnight-elevated) 100%);
+  border: 1px solid var(--color-midnight-border);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.eyebrow-on-dark {
+  color: var(--color-text-muted-on-dark);
+}
+
+.text-label-on-dark {
+  color: var(--color-text-muted-on-dark);
+}
+
+.decision-hero-state {
+  font-size: var(--font-size-4xl);
+  line-height: 1.05;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: var(--spacing-xs) 0 0;
+}
+
+.decision-hero-state-compact {
+  font-size: var(--font-size-xl);
+}
+
+.decision-hero-state-success {
+  color: #4ade80;
+}
+
+.decision-hero-state-warning {
+  color: #fbbf24;
+}
+
+.decision-hero-state-danger {
+  color: #f87171;
+}
+
+.decision-hero-state-info,
+.decision-hero-state-neutral {
+  color: var(--color-text-on-dark);
+}
+
+.decision-hero-sentence {
+  color: var(--color-text-on-dark);
+  font-size: var(--font-size-md);
+  max-width: 640px;
+  margin: 0;
+}
+
+.decision-hero-savings {
+  margin-top: var(--spacing-sm);
+}
+
+.decision-hero-savings-value {
+  font-size: var(--font-size-4xl);
+  font-weight: 700;
+  color: var(--color-text-on-dark);
+  margin: 0;
+  text-shadow: var(--shadow-primary);
+}
+
+.decision-hero-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+}
+
+.decision-hero-chip {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border: 1px solid var(--color-midnight-border);
+  border-radius: var(--radius-full);
+  color: var(--color-text-on-dark);
+  font-size: var(--font-size-sm);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.decision-hero-note {
+  margin-top: var(--spacing-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.decision-hero-note-link {
+  color: var(--color-text-on-dark);
+  text-decoration: underline;
+  font-size: var(--font-size-sm);
+}
+
+@media (max-width: 480px) {
+  .decision-hero {
+    padding: var(--spacing-lg);
+  }
+
+  .decision-hero-state {
+    font-size: var(--font-size-3xl);
+  }
+
+  .decision-hero-savings-value {
+    font-size: var(--font-size-3xl);
+  }
+
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ---------------------------------------------------------------------
+   UI-5 -- Selected Procurement Group (SelectedGroupCard.jsx)
+   --------------------------------------------------------------------- */
+
+.selected-group-vendors {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.selected-group-vendor-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+}
+
+.selected-group-vendor-tag {
+  padding: 2px var(--spacing-sm);
+  border-radius: var(--radius-full);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.selected-group-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--spacing-sm);
+  margin: 0;
+}
+
+.selected-group-fact dt {
+  margin: 0;
+}
+
+.selected-group-fact dd {
+  margin: 0;
+}
+
+.selected-group-network {
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--spacing-md);
+}
+
+/* ---------------------------------------------------------------------
+   UI-5 -- Vendor Economics (VendorEconomics.jsx)
+   --------------------------------------------------------------------- */
+
+.vendor-economics-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.vendor-economics-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.vendor-economics-totals {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.vendor-economics-bars {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* UI-9 -- one vendor's paired cost-share + savings bars (Section G).
+   Only used by results/VendorEconomics.jsx -- insights/
+   DecisionDistribution.jsx and GroupSizeAnalysis.jsx render their own
+   single .vendor-economics-bar-row directly, unaffected by this wrapper. */
+.vendor-economics-bar-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.vendor-economics-bar-group:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.vendor-economics-bar-vendor {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.vendor-economics-bar-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 160px) 1fr auto;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.vendor-economics-bar-track {
+  height: 10px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-alt);
+  overflow: hidden;
+}
+
+.vendor-economics-bar-fill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: var(--radius-full);
+  transition: width var(--transition-slow);
+}
+
+.vendor-economics-bar-fill-savings {
+  background: var(--color-success);
+}
+
+.vendor-economics-bar-value {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 480px) {
+  .vendor-economics-bar-row {
+    grid-template-columns: minmax(100px, 120px) 1fr auto;
+  }
+
+  .vendor-economics-totals {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+  }
+}
+
+/* ---------------------------------------------------------------------
+   UI-9 -- Decision Flow Visual (DecisionFlowVisual.jsx)
+   --------------------------------------------------------------------- */
+
+.decision-flow-visual {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin: var(--spacing-sm) 0 var(--spacing-md);
+}
+
+.decision-flow-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-alt);
+  min-width: 96px;
+}
+
+.decision-flow-stage-selected {
+  border-color: var(--color-success-border);
+  background: var(--color-success-light);
+}
+
+.decision-flow-stage-selected .text-metric {
+  color: var(--color-success);
+}
+
+.decision-flow-arrow {
+  font-size: var(--font-size-xl);
+  color: var(--color-text-muted);
+}
+
+@media (max-width: 480px) {
+  .decision-flow-visual {
+    justify-content: center;
+  }
+
+  .decision-flow-stage {
+    min-width: 80px;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   UI-5 -- Candidate Groups Evaluated (CandidateGroupsPanel.jsx / CandidateGroupRow.jsx)
+   --------------------------------------------------------------------- */
+
+.candidate-group-row-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+}
+
+.candidate-group-row {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.candidate-group-row.is-selected {
+  border-color: var(--color-success-border);
+  background: var(--color-success-light);
+}
+
+.candidate-group-row-header {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+}
+
+.candidate-group-row-summary {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  min-width: 0;
+}
+
+.candidate-group-id {
+  white-space: nowrap;
+}
+
+.candidate-group-selected-mark {
+  color: var(--color-success);
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+}
+
+.candidate-group-row-badges {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.candidate-group-savings-preview {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.candidate-group-chevron {
+  color: var(--color-text-muted);
+}
+
+/* UI-8 -- smooth expand/collapse via the grid-template-rows 0fr/1fr
+   technique: animates a dynamic content height without JS measuring the
+   DOM, and degrades gracefully (an instant snap, never broken layout) if
+   `grid-template-rows` transitions are unsupported. (analysis/
+   VendorCard.jsx's own expand/collapse swaps two entirely different
+   trees rather than revealing more content below a fixed header, so it
+   uses a plain fade crossfade instead -- see styles/analysis.css.) */
+.candidate-group-row-detail-wrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--transition-base);
+}
+
+.candidate-group-row-detail-wrapper.is-expanded {
+  grid-template-rows: 1fr;
+}
+
+.candidate-group-row-detail {
+  min-height: 0;
+  overflow: hidden;
+  padding: 0 var(--spacing-md) var(--spacing-md);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.candidate-group-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--spacing-sm);
+  margin: 0;
+}
+
+.candidate-group-facts dt,
+.candidate-group-facts dd {
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .candidate-group-row-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   UI-5 -- Diagnostics (DecisionDiagnostics.jsx)
+   --------------------------------------------------------------------- */
+
+.diagnostics-list {
+  list-style: none;
+  margin: var(--spacing-sm) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.diagnostic-item {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--color-border-strong);
+  background: var(--color-surface-alt);
+  font-size: var(--font-size-sm);
+}
+
+.diagnostic-item-warning {
+  border-left-color: var(--color-warning-border);
+  background: var(--color-warning-light);
+}
+
+.diagnostic-item-info {
+  border-left-color: var(--color-info-border);
+  background: var(--color-info-light);
+}
+
+.diagnostic-item-danger {
+  border-left-color: var(--color-danger-border);
+  background: var(--color-danger-light);
+}
+
+/* ---------------------------------------------------------------------
+   UI-5 -- Vendor Submission Detail (reuses .formation-pool)
+   --------------------------------------------------------------------- */
+
+.vendor-submission-detail summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* ---------------------------------------------------------------------
+   UI-5 -- Decision Pipeline (DecisionExplanation.jsx)
+   --------------------------------------------------------------------- */
+
+.decision-pipeline {
+  list-style: none;
+  margin: var(--spacing-md) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.decision-pipeline-stage {
+  display: flex;
+  gap: var(--spacing-md);
+  position: relative;
+  padding-bottom: var(--spacing-lg);
+}
+
+.decision-pipeline-stage:last-child {
+  padding-bottom: 0;
+}
+
+.decision-pipeline-stage:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  left: 15px;
+  top: 34px;
+  bottom: 0;
+  width: 2px;
+  background: var(--color-border);
+}
+
+.decision-pipeline-index {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  z-index: 1;
+}
+
+.decision-pipeline-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: 4px;
+}
+
+/* ---------------------------------------------------------------------
+   UI-5 -- Decision Summary (ResultSummary.jsx)
+   --------------------------------------------------------------------- */
+
+.result-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--spacing-md);
+  margin: 0;
+}
+
+.result-summary-grid dt {
+  margin: 0 0 var(--spacing-xs);
+}
+
+.result-summary-grid dd {
+  margin: 0;
+}
+
+/* ---------------------------------------------------------------------
+   UI-5 -- Actions (ResultActions.jsx)
+   --------------------------------------------------------------------- */
+
+.result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}
+
+@media (max-width: 480px) {
+  .result-actions {
+    flex-direction: column;
+  }
+
+  .result-actions .btn {
+    width: 100%;
+    text-align: center;
+  }
+}

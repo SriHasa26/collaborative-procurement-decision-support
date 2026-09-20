@@ -1,0 +1,215 @@
+/* Phase 7B -- application shell layout: Sidebar + TopBar + content area,
+   responsive from ~375px through ~1440px+. Requires variables.css.
+   UI-1 -- the sidebar now uses the midnight surface family (a common,
+   premium-SaaS "dark sidebar, light content" pattern -- see
+   reports/ui1_design_system_and_frontend_foundation.md Section 8), and
+   the three previously-bare z-index numbers (10/20/30) now reference the
+   tokens variables.css reserves for them. Structure, breakpoints, and the
+   Phase 7G off-canvas/overflow fixes below are unchanged. */
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+}
+
+/* ---------------------------------------------------------------------
+   Sidebar
+   --------------------------------------------------------------------- */
+
+.sidebar {
+  width: var(--sidebar-width);
+  flex-shrink: 0;
+  background: var(--color-midnight);
+  border-right: 1px solid var(--color-midnight-border);
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.sidebar-brand {
+  padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-md);
+  border-bottom: 1px solid var(--color-midnight-border);
+}
+
+.sidebar-brand-name {
+  display: block;
+  font-weight: 700;
+  font-size: var(--font-size-md);
+  color: var(--color-text-on-dark);
+  line-height: var(--line-height-tight);
+}
+
+.sidebar-brand-tagline {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted-on-dark);
+}
+
+.sidebar-nav {
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.sidebar-nav-link {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: 10px var(--spacing-md);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-muted-on-dark);
+  border-left: 3px solid transparent;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.sidebar-nav-link:hover {
+  background: var(--color-midnight-elevated);
+  color: var(--color-text-on-dark);
+  text-decoration: none;
+}
+
+.sidebar-nav-link.is-active {
+  background: var(--color-midnight-elevated);
+  color: var(--color-text-on-dark);
+  border-left-color: var(--color-accent);
+  font-weight: 600;
+}
+
+.sidebar-backdrop {
+  display: none;
+}
+
+/* ---------------------------------------------------------------------
+   Top bar + main content
+   --------------------------------------------------------------------- */
+
+.app-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  height: var(--topbar-height);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  padding: 0 var(--spacing-lg);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-topbar);
+}
+
+.topbar-title {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.topbar-menu-button {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  transition: background-color var(--transition-fast);
+}
+
+.topbar-menu-button:hover {
+  background: var(--color-surface-alt);
+}
+
+.app-content {
+  flex: 1;
+  padding: var(--spacing-xl) var(--spacing-lg);
+}
+
+.app-content-inner {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2xl);
+}
+
+/* Phase 7G fix: every direct child of this flex column is a flex item,
+   which defaults to `min-width: auto` -- meaning it refuses to shrink
+   below its content's intrinsic minimum width. A wide descendant (most
+   notably a multi-column <table>, e.g. the run history table) can then
+   force this whole column -- and the page -- wider than the viewport,
+   even though the table's own wrapper already scrolls internally via
+   `overflow-x: auto` (.history-table-wrapper). Overriding to 0 on every
+   direct child lets each one shrink to the column's actual width, so an
+   inner scrollable element's own scrollbar is what handles overflow,
+   never the page. Found via real-browser responsive verification
+   (Phase 7G) on /history at 375px width -- the sole page whose direct
+   content is a table wrapper not nested inside a .page-section. */
+.app-content-inner > * {
+  min-width: 0;
+}
+
+/* ---------------------------------------------------------------------
+   Responsive: below ~1024px the sidebar becomes an off-canvas drawer
+   --------------------------------------------------------------------- */
+
+@media (max-width: 1024px) {
+  .sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: var(--z-sidebar);
+    transform: translateX(-100%);
+    transition: transform var(--transition-base);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .sidebar.is-open {
+    transform: translateX(0);
+  }
+
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(11, 18, 32, 0.5);
+    z-index: var(--z-backdrop);
+  }
+
+  .topbar-menu-button {
+    display: inline-flex;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-content {
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+
+  .app-content-inner {
+    gap: var(--spacing-xl);
+  }
+
+  .topbar {
+    padding: 0 var(--spacing-md);
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: min(var(--sidebar-width), 82vw);
+  }
+}

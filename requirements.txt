@@ -14,7 +14,38 @@
 #              (used in tests/api/) to issue in-process HTTP requests
 #              against the FastAPI app -- a genuine test dependency, not
 #              an unrelated addition.
+# psycopg   -- added in Phase 8B for backend/persistence/supabase_repository.py's
+#              direct PostgreSQL connection to Supabase (Phase 8A ADR-5:
+#              a direct connection, not the Supabase REST client library
+#              or handcrafted HTTP calls). The [binary] extra bundles a
+#              precompiled libpq, avoiding a system-level PostgreSQL
+#              client library dependency. Used synchronously (matching
+#              this project's existing entirely-synchronous FastAPI route
+#              handlers and repository methods) -- deliberately NOT the
+#              already-locally-present `asyncpg` package, since adopting
+#              it would force an unrelated, unrequested async conversion
+#              across the route/repository layers (see
+#              reports/phase8b_supabase_database_foundation.md Section 6).
+# PyJWT     -- added in Phase 8D for backend/security/jwt_verifier.py's local
+#              (JWKS-based) verification of Supabase access tokens (Phase 8A
+#              ADR-4: verify locally, never call Supabase's own
+#              /auth/v1/user endpoint per request). Already installed
+#              transitively before this phase; pinned here explicitly now
+#              that it is a direct, load-bearing dependency. Chosen over the
+#              also-installed `python-jose` because PyJWT's own
+#              `PyJWKClient` was confirmed (by reading its source) to
+#              already implement the exact bounded JWKS cache and
+#              "unknown kid -> refresh once -> fail" behavior this phase
+#              requires, so no library was added purely to satisfy this
+#              phase -- see reports/phase8d_fastapi_jwt_authentication.md
+#              Section "Dependencies added". `cryptography` (already
+#              installed as a transitive dependency of both PyJWT and
+#              psycopg) provides the RS256/ES256 primitives PyJWT uses; it
+#              is not listed separately here since nothing in this project
+#              imports it directly.
 networkx>=3.0
 pytest>=7.0
 fastapi>=0.100.0
 httpx>=0.24.0
+psycopg[binary]>=3.1
+PyJWT[crypto]>=2.8

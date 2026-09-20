@@ -1,0 +1,82 @@
+/* UI-7 -- styles specific to the premium Procurement Insights page
+   (/insights). Reuses UI-1..UI-6 tokens and classes throughout (.card,
+   .metrics-grid, .vendor-economics-bar-*, .diagnostics-list,
+   .history-table, .skeleton-block, .empty-state) -- only the additions
+   genuinely needed for this page's own new elements live here. */
+
+.insights-scope-banner {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* ---------------------------------------------------------------------
+   Limited Data state (LimitedDataState.jsx)
+   --------------------------------------------------------------------- */
+
+.limited-data-state {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-lg);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-alt);
+}
+
+.limited-data-icon {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-muted);
+}
+
+.limited-data-title {
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.limited-data-count {
+  margin-top: var(--spacing-xs);
+}
+
+/* ---------------------------------------------------------------------
+   Savings Overview -- single-run case (SavingsOverview.jsx)
+   --------------------------------------------------------------------- */
+
+.insights-savings-single {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.insights-savings-single-value {
+  font-size: var(--font-size-3xl);
+  color: var(--color-success);
+}
+
+/* ---------------------------------------------------------------------
+   Methodology note (MethodologyNote.jsx)
+   --------------------------------------------------------------------- */
+
+.methodology-note-list {
+  margin: var(--spacing-sm) 0 0;
+  padding-left: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+/* ---------------------------------------------------------------------
+   Loading skeleton
+   --------------------------------------------------------------------- */
+
+.insights-skeleton-banner {
+  height: 60px;
+}
+
+@media (max-width: 480px) {
+  .limited-data-state {
+    padding: var(--spacing-md);
+  }
+}

@@ -25,6 +25,16 @@ reaches this server. This is the ONLY reason CORSMiddleware was added:
 it allows exactly the two equivalent local Vite dev origins
 (http://localhost:5173 and http://127.0.0.1:5173 -- browsers treat these
 as distinct origins), never a wildcard, and never anything else.
+
+Phase 8E -- `allow_headers` now also lists "Authorization": Phase 8D's
+`get_current_user()` (backend/security/auth.py) has required a Bearer
+token on the protected routes since Phase 8D, but nothing sent one until
+Phase 8E's frontend change (frontend/src/api/client.js). Without this
+addition, a browser's CORS preflight would reject the header before the
+request ever reached FastAPI, regardless of how correct the token itself
+was -- this was found and fixed as part of wiring the two together, not a
+new access control decision (`allow_credentials` stays False: this uses a
+bearer header, never a cookie, so no credentialed-CORS mode is needed).
 """
 
 from fastapi import FastAPI
@@ -66,7 +76,7 @@ app.add_middleware(
     allow_origins=LOCAL_FRONTEND_ORIGINS,
     allow_credentials=False,
     allow_methods=["GET", "POST"],
-    allow_headers=["Content-Type"],
+    allow_headers=["Content-Type", "Authorization"],
 )
 
 

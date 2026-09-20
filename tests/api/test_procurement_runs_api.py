@@ -18,6 +18,7 @@ data/app/procurement.db is never touched by these tests.
 from fastapi.testclient import TestClient
 
 from backend.api.main import app
+from tests.api.conftest import FAKE_TEST_USER
 from tests.fixtures.api_fixtures import (
     ABSTAIN_NO_EVIDENCE,
     ELIGIBLE_1,
@@ -37,7 +38,7 @@ def test_t7_analyze_persists_a_run(isolated_repository):
     response = client.post("/procurement/analyze", json=payload)
 
     assert response.status_code == 200
-    stored = isolated_repository.list_runs()
+    stored = isolated_repository.list_runs(FAKE_TEST_USER.user_id)
     assert len(stored) == 1
     assert stored[0].commodity == "tomato"
     assert stored[0].run_status == response.json()["run_status"]
@@ -115,4 +116,4 @@ def test_malformed_analyze_request_still_returns_422(isolated_repository):
     response = client.post("/procurement/analyze", json=payload)
     assert response.status_code == 422
     # A malformed/rejected request must never be persisted.
-    assert isolated_repository.list_runs() == []
+    assert isolated_repository.list_runs(FAKE_TEST_USER.user_id) == []

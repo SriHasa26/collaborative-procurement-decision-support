@@ -1,0 +1,339 @@
+/* Phase 7C -- styles specific to the procurement analysis form. Reuses
+   Phase 7B's tokens (variables.css) and base component classes (.card,
+   .btn, .badge, .text-*) -- only the additions genuinely needed for form
+   layout live here. */
+
+.analysis-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+/* <fieldset class="card"> needs its native browser chrome reset before the
+   .card styling (border/padding/shadow) applies cleanly. */
+.form-section {
+  min-width: 0;
+  border: 1px solid var(--color-border);
+}
+
+/* Browsers position a <legend> straddling the fieldset's own top border by
+   default, which visually "merges" the title into the card's edge once the
+   fieldset gets Card styling. `float: left; width: 100%` takes the legend
+   out of that special fieldset/legend layout algorithm entirely (a
+   long-standing, reliable cross-browser reset) so it renders as a normal
+   block title fully above the card, using .card-title's own margin like
+   any other card heading. */
+.form-section > legend {
+  float: left;
+  width: 100%;
+  padding: 0;
+}
+
+/* Both clear the floated legend above (see .form-section > legend) so they
+   stack fully below it instead of collapsing into its float. */
+.form-section-description {
+  clear: left;
+}
+
+.form-section-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-sm);
+  clear: left;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.form-field input,
+.form-field select {
+  padding: 8px var(--spacing-sm);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  width: 100%;
+}
+
+.form-field input:focus-visible,
+.form-field select:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+.form-field-error {
+  font-size: var(--font-size-xs);
+  color: var(--color-danger);
+}
+
+.form-field-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-md);
+  align-items: end;
+}
+
+.checkbox-field {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.checkbox-field input {
+  width: auto;
+}
+
+.vendor-card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  background: var(--color-surface-alt);
+}
+
+.transport-tier-row {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-surface-alt);
+}
+
+@media (max-width: 480px) {
+  .form-field-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   UI-4 -- guided analysis wizard.
+   UI-10 -- `.vendor-list`, `.analysis-form-actions`, `.request-preview-body`,
+   `.analysis-ready-note` (Phase 7C/7D-era rules, unused since their sole
+   callers were rewritten/removed in UI-4) were confirmed dead via a
+   repo-wide grep (zero JSX references) during this phase's final dead-
+   code audit and removed -- see reports/ui10_final_product_audit.md.
+   --------------------------------------------------------------------- */
+
+.analysis-wizard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.wizard-subsection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.wizard-nav-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+}
+
+/* ---- Step progress indicator ---- */
+
+.wizard-progress-track {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: var(--spacing-sm);
+  position: relative;
+}
+
+.wizard-progress-track::before {
+  content: "";
+  position: absolute;
+  top: 19px;
+  left: 6%;
+  right: 6%;
+  height: 2px;
+  background: var(--color-border);
+  z-index: 0;
+}
+
+.wizard-progress-step {
+  flex: 1;
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  min-width: 0;
+}
+
+.wizard-progress-step-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.wizard-progress-step-button:disabled {
+  cursor: default;
+}
+
+.wizard-progress-step-index {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+  background: var(--color-surface);
+  border: 2px solid var(--color-border-strong);
+  color: var(--color-text-muted);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.wizard-progress-step-label {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.wizard-progress-step.is-completed .wizard-progress-step-index {
+  background: var(--color-success);
+  border-color: var(--color-success);
+  color: var(--color-text-on-primary);
+}
+
+.wizard-progress-step.is-completed .wizard-progress-step-label {
+  color: var(--color-text-secondary);
+}
+
+.wizard-progress-step.is-current .wizard-progress-step-index {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-text-on-primary);
+  box-shadow: var(--shadow-primary);
+}
+
+.wizard-progress-step.is-current .wizard-progress-step-label {
+  color: var(--color-text-primary);
+}
+
+.wizard-progress-compact {
+  display: none;
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .wizard-progress-track {
+    display: none;
+  }
+
+  .wizard-progress-compact {
+    display: block;
+  }
+}
+
+/* ---- Transport tiers as compact cards ---- */
+
+.transport-tier-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+/* ---- Vendor cards ---- */
+
+.vendor-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.vendor-card.is-expanded {
+  background: var(--color-surface);
+  border-color: var(--color-primary);
+}
+
+.vendor-card-summary {
+  background: var(--color-surface);
+}
+
+.vendor-card-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+}
+
+.vendor-card-done-row {
+  margin-top: var(--spacing-sm);
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ---- Review step ---- */
+
+.review-summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.review-commodity-title {
+  font-size: var(--font-size-xl);
+}
+
+.review-section {
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.review-vendor-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.review-vendor-bullet {
+  color: var(--color-primary);
+  margin-right: var(--spacing-xs);
+}
+
+.review-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid var(--color-border);
+}
+
+@media (max-width: 640px) {
+  .wizard-nav-row,
+  .review-actions {
+    flex-direction: column-reverse;
+  }
+
+  .wizard-nav-row .btn,
+  .review-actions .btn {
+    width: 100%;
+  }
+
+  .vendor-card-actions {
+    flex-direction: column;
+  }
+
+  .vendor-card-actions .btn {
+    width: 100%;
+  }
+}

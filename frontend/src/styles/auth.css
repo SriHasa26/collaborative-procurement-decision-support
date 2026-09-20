@@ -1,0 +1,60 @@
+/* Phase 8C -- styles specific to authentication (Sign In / Sign Up pages,
+   the TopBar auth indicator). Reuses Phase 7B's tokens (variables.css) and
+   base classes (.card, .btn, .form-field, .page-section) -- only the
+   additions genuinely needed for these live here. */
+
+.auth-page-section {
+  max-width: 420px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.auth-form-actions {
+  display: flex;
+}
+
+.auth-form-actions .btn {
+  width: 100%;
+}
+
+.auth-switch-link {
+  margin-top: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+/* ---------------------------------------------------------------------
+   TopBar authenticated-user indicator
+   --------------------------------------------------------------------- */
+
+.topbar-auth {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.topbar-auth-email {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topbar-auth-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+@media (max-width: 480px) {
+  .topbar-auth-email {
+    display: none;
+  }
+}

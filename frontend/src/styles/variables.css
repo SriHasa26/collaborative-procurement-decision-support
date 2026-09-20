@@ -1,0 +1,179 @@
+/* Phase 7B -- design tokens. Every color, spacing, radius, shadow, and
+   typography value used anywhere in the app is defined here ONCE as a CSS
+   custom property. Components must reference these variables, never a
+   hardcoded hex/px value, so the visual system stays consistent and can be
+   adjusted from a single place.
+
+   UI-1 -- expanded into a full premium design system. Every existing
+   variable NAME is preserved exactly (dozens of rules across
+   components.css/layout.css/analysis.css/results.css/auth.css already
+   reference them) -- only values were refined, and new tokens were added
+   alongside. Nothing here was renamed. Color direction: deep midnight
+   navy + a refined blue primary + cool neutral surfaces + a restrained
+   violet accent, used sparingly (see reports/ui1_design_system_and_frontend_foundation.md
+   Section 6). */
+
+:root {
+  /* ---- Brand ---- */
+  --color-primary: #2f54eb;
+  --color-primary-hover: #1e3fc4;
+  --color-primary-light: #e8ecfe;
+
+  --color-secondary: #0b1220;
+
+  /* UI-1 -- deep midnight surface family, for the sidebar and any future
+     dark/hero surface (kept separate from --color-secondary, which
+     several existing rules already use for a dark *content* panel, e.g.
+     analysis.css's .request-preview-body -- a distinct token avoids
+     conflating "a dark panel embedded in a light page" with "a dark
+     application surface"). */
+  --color-midnight: #0b1220;
+  --color-midnight-elevated: #141d33;
+  --color-midnight-border: #232c47;
+
+  /* UI-1 -- restrained accent (violet), used sparingly: eyebrow/kicker
+     text, a focus glow, a small highlight -- never as a primary action
+     color (that remains --color-primary) and never covering a large
+     surface area, per the "premium, not flashy" principle. */
+  --color-accent: #7c6cf0;
+  --color-accent-light: #efecfe;
+
+  /* ---- Semantic (decision-state + feedback colors) ---- */
+  --color-success: #15803d;
+  --color-success-light: #dcfce7;
+  --color-success-border: #86efac;
+
+  --color-warning: #b45309;
+  --color-warning-light: #fef3c7;
+  --color-warning-border: #fcd34d;
+
+  --color-danger: #b91c1c;
+  --color-danger-light: #fee2e2;
+  --color-danger-border: #fca5a5;
+
+  /* "info" is used for ABSTAIN and other neutral-evidence states -- it must
+     never be visually confused with --color-danger (see
+     DecisionStateBadge / ErrorState -- ABSTAIN is never rendered in the
+     danger palette). */
+  --color-info: #4f46e5;
+  --color-info-light: #e0e7ff;
+  --color-info-border: #c7d2fe;
+
+  /* ---- Neutral / surface ---- */
+  --color-background: #f5f6fb;
+  --color-surface: #ffffff;
+  --color-surface-alt: #eef0f8;
+  /* UI-1 -- same color as --color-surface today; a distinct token so an
+     "elevated" surface (e.g. a highlighted card, a popover) can be
+     re-tuned independently of the base surface later without a
+     find-and-replace across every component. */
+  --color-surface-elevated: #ffffff;
+  --color-border: #e3e6f0;
+  --color-border-strong: #c7cce0;
+
+  --color-text-primary: #10152b;
+  --color-text-secondary: #4c5476;
+  --color-text-muted: #8b92ad;
+  --color-text-on-primary: #ffffff;
+  /* UI-1 -- text tokens for the midnight sidebar surface. */
+  --color-text-on-dark: #e7e9f7;
+  --color-text-muted-on-dark: #9ba3c7;
+
+  /* ---- Spacing ---- */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 40px;
+  --spacing-2xl: 64px;
+  /* UI-1 -- for future hero/landing sections (UI-2); not yet applied
+     anywhere in this phase. */
+  --spacing-3xl: 96px;
+
+  /* ---- Radius ---- */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  /* UI-1 -- for a future hero panel/large feature card (UI-2); not yet
+     applied anywhere in this phase. */
+  --radius-xl: 24px;
+  --radius-full: 999px;
+
+  /* ---- Shadow ---- */
+  --shadow-sm: 0 1px 2px rgba(16, 21, 43, 0.06);
+  --shadow-md: 0 4px 16px rgba(16, 21, 43, 0.08);
+  --shadow-lg: 0 16px 40px rgba(16, 21, 43, 0.14);
+  /* UI-1 -- a colored focus ring, layered alongside (never instead of)
+     the existing :focus-visible outline in global.css -- used by the new
+     .card-interactive/.btn states below. */
+  --shadow-focus: 0 0 0 4px rgba(47, 84, 235, 0.18);
+  /* UI-1 -- a restrained colored shadow under the primary CTA, the one
+     place this phase intentionally lets brand color read as "glow" --
+     see the Button system in components.css. */
+  --shadow-primary: 0 8px 20px rgba(47, 84, 235, 0.24);
+
+  /* ---- Typography ---- */
+  --font-sans:
+    system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-md: 18px;
+  --font-size-lg: 22px;
+  --font-size-xl: 28px;
+  --font-size-2xl: 36px;
+  --font-size-3xl: 44px;
+  /* UI-1 -- for a future display/hero heading (UI-2); not yet applied
+     anywhere in this phase. */
+  --font-size-4xl: 56px;
+
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.7;
+
+  /* ---- Layout ---- */
+  --sidebar-width: 248px;
+  --topbar-height: 64px;
+  --content-max-width: 1200px;
+  /* UI-1 -- for a future wide dashboard/data-grid layout (UI-3+); not yet
+     applied anywhere in this phase. */
+  --content-max-width-wide: 1440px;
+
+  /* ---- Z-index layers ---- */
+  /* UI-1 -- formalizes what were previously bare numbers (10/20/30) at
+     each of these rules' own call sites in layout.css. --z-modal/
+     --z-tooltip/--z-toast are reserved now, deliberately unused in this
+     phase (no Modal/Tooltip/Toast component exists yet -- see
+     reports/ui1_design_system_and_frontend_foundation.md Section 8), so
+     a future phase's overlay work has an already-agreed layer instead of
+     picking a number ad hoc. */
+  --z-topbar: 10;
+  --z-backdrop: 20;
+  --z-sidebar: 30;
+  --z-modal: 100;
+  --z-tooltip: 110;
+  --z-toast: 120;
+
+  /* ---- Motion ---- */
+  /* UI-1 -- an explicit standard easing curve (Material's "standard"
+     curve), applied to the existing fast/base transitions and the new
+     slow one, instead of the flatter default `ease`. */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --transition-fast: 120ms var(--ease-standard);
+  --transition-base: 200ms var(--ease-standard);
+  /* UI-1 -- for a page/section entrance transition (see global.css's
+     .animate-in). */
+  --transition-slow: 320ms var(--ease-standard);
+
+  /* ---- Breakpoints (documented here for reference; CSS custom properties
+     cannot be used inside @media conditions, so layout.css/components.css
+     repeat these exact px values in their media queries) ----
+     --breakpoint-desktop: 1440px
+     --breakpoint-laptop:  1024px
+     --breakpoint-tablet:  768px
+     --breakpoint-mobile:  375px
+  */
+}

@@ -6,17 +6,49 @@
 // Contains no procurement business logic (no distance, savings, MOQ,
 // freshness, or decision calculation) -- it only knows how to talk HTTP to
 // whatever backend API_BASE_URL points at.
+//
+// Phase 8E -- attaches `Authorization: Bearer <access_token>` when a
+// Supabase session exists (backend/security/auth.py, Phase 8D, verifies
+// it). This is the ONLY place that happens -- no page/component attaches
+// its own header, per this phase's "centralize in the existing API
+// request layer" requirement. Reuses the existing Supabase client
+// singleton (frontend/src/lib/supabase.js) rather than a second one.
 
+import { supabase } from "../lib/supabase";
 import { API_BASE_URL } from "../config/env";
+
+async function getAuthHeader() {
+  if (!supabase) return {};
+  try {
+    // Reads the CURRENT session fresh on every request (never a token
+    // cached here) -- getSession() also transparently refreshes an
+    // expired access token via the stored refresh token, so a long-lived
+    // page tab keeps sending a valid token without any extra code. After
+    // sign-out, Supabase's own client reports no session, so this simply
+    // stops attaching a header on the very next request -- no manual
+    // "clear the token" step is needed anywhere.
+    const { data } = await supabase.auth.getSession();
+    const token = data.session?.access_token;
+    // No session -> no header at all. Never send an empty/fake token.
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  } catch {
+    // Session lookup failing (e.g. Supabase misconfigured) must not break
+    // an otherwise-public request -- fall back to no header, exactly like
+    // "no session".
+    return {};
+  }
+}
 
 async function request(path, options = {}) {
   const url = `${API_BASE_URL}${path}`;
+  const authHeader = await getAuthHeader();
   let response;
 
   try {
     response = await fetch(url, {
       headers: {
         "Content-Type": "application/json",
+        ...authHeader,
         ...(options.headers || {}),
       },
       ...options,

@@ -1,0 +1,355 @@
+/* UI-3 -- styles specific to the authenticated dashboard (/dashboard).
+   Reuses UI-1/UI-2 tokens and classes (.card, .value-grid, .text-metric,
+   .decision-preview-metrics, etc.) throughout -- only the additions
+   genuinely needed for this page's own layout live here. */
+
+.dashboard-intro {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+.dashboard-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.dashboard-decision-card {
+  border-color: var(--color-success-border);
+}
+
+.dashboard-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+}
+
+.dashboard-action-panel {
+  align-items: flex-start;
+}
+
+/* UI-7 -- ActionPanel.jsx's second, legitimate link to /insights. */
+.dashboard-action-panel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}
+
+@media (max-width: 960px) {
+  .dashboard-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   Procurement Group Overview (NetworkOverview.jsx)
+   --------------------------------------------------------------------- */
+
+.network-overview-svg {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  margin: 0 auto;
+}
+
+.network-overview-edge {
+  stroke: var(--color-primary);
+  stroke-width: 2;
+  opacity: 0.4;
+}
+
+.network-overview-hub {
+  fill: var(--color-primary);
+  filter: drop-shadow(0 2px 6px rgba(47, 84, 235, 0.35));
+}
+
+/* UI-9 -- the hub's fill reflects this group's own real
+   final_decision_state (results/SelectedGroupNetwork.jsx only; Dashboard's
+   NetworkOverview.jsx never applies one of these classes, so it keeps its
+   existing plain --color-primary hub unchanged). A restrained colored
+   glow (drop-shadow), not a flat recolor alone, is the one place this
+   phase lets a semantic color read as genuine depth. */
+.network-overview-hub-success {
+  fill: var(--color-success);
+  filter: drop-shadow(0 2px 8px rgba(21, 128, 61, 0.35));
+}
+
+.network-overview-hub-warning {
+  fill: var(--color-warning);
+  filter: drop-shadow(0 2px 8px rgba(180, 83, 9, 0.35));
+}
+
+.network-overview-hub-danger {
+  fill: var(--color-danger);
+  filter: drop-shadow(0 2px 8px rgba(185, 28, 28, 0.35));
+}
+
+.network-overview-hub-info {
+  fill: var(--color-info);
+  filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.35));
+}
+
+.network-overview-hub-label {
+  font-size: 11px;
+  font-weight: 700;
+  fill: var(--color-text-on-primary);
+  text-anchor: middle;
+}
+
+.network-overview-node {
+  cursor: pointer;
+}
+
+.network-overview-node circle {
+  fill: var(--color-surface);
+  stroke: var(--color-border-strong);
+  stroke-width: 2;
+  transition: stroke var(--transition-fast), fill var(--transition-fast);
+  filter: drop-shadow(0 1px 3px rgba(16, 21, 43, 0.18));
+}
+
+.network-overview-node text {
+  font-size: 12px;
+  font-weight: 600;
+  fill: var(--color-text-secondary);
+  text-anchor: middle;
+  dominant-baseline: middle;
+  pointer-events: none;
+}
+
+.network-overview-node:hover circle,
+.network-overview-node:focus-visible circle {
+  stroke: var(--color-primary);
+}
+
+.network-overview-node.is-selected circle {
+  fill: var(--color-primary-light);
+  stroke: var(--color-primary);
+}
+
+.network-overview-node:focus-visible {
+  outline: none;
+}
+
+.network-overview-node:focus-visible circle {
+  filter: drop-shadow(0 0 0 3px var(--color-primary));
+}
+
+/* UI-8 -- hover/focus on one node softly emphasizes it and its own edge
+   while dimming the rest of the network, a real relationship cue (not
+   decoration): the active node/edge keep full opacity, everything else
+   fades. `.has-active-node` is only ever added while something is
+   genuinely hovered/focused/selected -- with nothing active, every node
+   and edge renders exactly as before this phase. */
+.network-overview-edge {
+  transition: opacity var(--transition-base), stroke var(--transition-base);
+}
+
+.network-overview-svg.has-active-node .network-overview-edge:not(.is-active) {
+  opacity: 0.15;
+}
+
+.network-overview-edge.is-active {
+  opacity: 0.9;
+  stroke: var(--color-accent);
+}
+
+.network-overview-node {
+  transition: opacity var(--transition-base);
+}
+
+.network-overview-svg.has-active-node .network-overview-node:not(.is-active) {
+  opacity: 0.35;
+}
+
+/* UI-9 -- a brief, ONE-TIME entrance (never a continuous/looping
+   animation, per this phase's explicit "no fake live effects" rule):
+   each edge "draws" itself from the hub outward, and each node fades and
+   scales in shortly after, both staggered by real index order (never
+   implying this is the backend's own runtime execution order -- it is a
+   presentation-only reveal of an already-complete, already-returned
+   result). `results/SelectedGroupNetwork.jsx` is the only caller that
+   applies `.network-edge-draw`/`.network-node-enter` -- Dashboard's
+   NetworkOverview.jsx (UI-3) never adds these classes, so it renders
+   exactly as before this phase, with no entrance animation added. Both
+   inherit the existing global prefers-reduced-motion override
+   automatically -- no extra code needed for that here. */
+@keyframes network-edge-draw {
+  from {
+    stroke-dashoffset: 300;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.network-edge-draw {
+  stroke-dasharray: 300;
+  animation: network-edge-draw var(--transition-slow) var(--ease-emphasized) both;
+}
+
+@keyframes network-node-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.network-node-enter {
+  /* SVG elements scale from the viewport origin by default, not their
+     own center -- `transform-box: fill-box` makes `transform-origin`
+     resolve against this node's own bounding box instead, so it scales
+     in place rather than sliding in from the corner. */
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: network-node-enter var(--transition-base) var(--ease-emphasized) both;
+}
+
+/* ---------------------------------------------------------------------
+   Network vendor detail panel (SelectedGroupNetwork.jsx's
+   VendorDetailPanel) -- shown after clicking a node. Only ever renders
+   fields the real response actually carried for that vendor.
+   --------------------------------------------------------------------- */
+
+.network-detail-panel {
+  margin-top: var(--spacing-sm);
+  padding: var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-alt);
+  animation: fade-in-up var(--transition-base) var(--ease-standard) both;
+}
+
+.network-detail-facts {
+  margin: var(--spacing-xs) 0 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--spacing-sm);
+}
+
+.network-detail-facts dt,
+.network-detail-facts dd {
+  margin: 0;
+}
+
+/* ---------------------------------------------------------------------
+   Savings Analytics (SavingsAnalytics.jsx)
+   --------------------------------------------------------------------- */
+
+.dashboard-savings-single {
+  font-size: var(--font-size-3xl);
+  color: var(--color-success);
+}
+
+.savings-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--spacing-sm);
+  height: 140px;
+  padding-top: var(--spacing-sm);
+}
+
+.savings-chart-bar-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+}
+
+.savings-chart-bar {
+  width: 100%;
+  min-height: 6px;
+  background: var(--color-primary);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  transition: background-color var(--transition-fast);
+}
+
+.savings-chart-bar:hover {
+  background: var(--color-primary-hover);
+}
+
+/* ---------------------------------------------------------------------
+   Recent Analyses (RecentAnalyses.jsx)
+   --------------------------------------------------------------------- */
+
+.recent-analyses-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.recent-analysis-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  padding: var(--spacing-sm) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.recent-analysis-row:last-child {
+  border-bottom: none;
+}
+
+.recent-analysis-main {
+  min-width: 160px;
+  flex: 1;
+}
+
+.recent-analysis-figures {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+@media (max-width: 640px) {
+  .recent-analysis-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   Loading skeleton
+   --------------------------------------------------------------------- */
+
+.dashboard-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.skeleton-block {
+  border-radius: var(--radius-lg);
+  background: linear-gradient(90deg, var(--color-surface-alt) 25%, var(--color-border) 50%, var(--color-surface-alt) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1400ms ease-in-out infinite;
+}
+
+.skeleton-kpi {
+  height: 92px;
+}
+
+.skeleton-panel {
+  height: 260px;
+}
+
+@keyframes skeleton-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}

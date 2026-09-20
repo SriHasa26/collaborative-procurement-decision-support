@@ -1,39 +1,46 @@
 """
-Phase 6G -- procurement-run persistence repository.
+Phase 6G -- persistence repository shapes.
+Phase 8B -- formalized into an explicit interface (`ProcurementRunRepository`,
+a `typing.Protocol`) plus the shared value types both implementations
+produce, so the application/API layer can depend on the abstraction alone
+and never needs to know whether persistence is backed by SQLite
+(`sqlite_repository.SQLiteProcurementRunRepository`) or Supabase
+PostgreSQL (`supabase_repository.SupabaseProcurementRunRepository`).
+Phase 8F -- every method now takes an explicit `user_id` (the verified
+identity from `backend.security.auth.AuthenticatedUser.user_id`, never
+from request JSON -- see backend/api/routes/procurement.py) as its
+ownership context. This is the minimal signature change needed to make
+ownership enforcement possible at the persistence layer itself, per
+reports/phase8a_architecture_decision_record.md ADR-5: application-level
+`WHERE user_id = ...` filtering is the PRIMARY enforcement layer, Postgres
+RLS a second, independent one -- not the reverse. `user_id` is threaded
+through explicitly as a plain parameter on every call; no global or
+thread-local "current user" state exists anywhere in this project.
 
-Responsible ONLY for reading and writing procurement_runs rows. Contains
-no validation, eligibility, geographic, group-formation, or decision
-logic -- it stores the ProcurementRunInput/ProcurementRunResult that
-Phase 6E's ProcurementRunService already computed, as an opaque JSON
-snapshot, and returns exactly what it stored. No query here ever branches
-on decision content.
+This module intentionally contains NO database-specific code (no
+`sqlite3`, no `psycopg`) -- it is the shared contract only. Neither
+implementation is imported here, to avoid this module (and anything that
+imports it, including `backend/api/routes/procurement.py`) accidentally
+depending on a specific database driver.
 
-SERIALIZATION REUSE: input/result are converted to JSON via
-backend.api.serialization.to_json_safe -- the same generic Enum/
-dataclass/tuple/set -> JSON-safe converter Phase 6F already built and
-tested for the HTTP response boundary. Reusing it here (rather than
-writing a second converter) means there is exactly one place in the
-project that knows how to turn these contracts into JSON, matching this
-phase's own "do not duplicate serialization logic" instruction. This
-creates a persistence -> api import, which is the reverse of the usual
-web-layering direction; it is safe here because
-backend/api/serialization.py has no FastAPI/HTTP-specific code at all
-(pure dataclass/Enum walking) and this project's `backend/api/` package
-does not import anything from `backend/persistence/` back -- there is no
-cycle. See reports/phase6g_database_persistence.md Section 6 for the
-explicit reasoning.
+Uses `typing.Protocol` (PEP 544, standard library, no new dependency)
+rather than `abc.ABC`: structural typing means both implementations
+satisfy this interface without needing to explicitly subclass it (they do
+anyway, for documentation clarity), keeping the abstraction as low-ceremony
+as the project's own "avoid premature abstraction" principle asks for --
+justified now specifically because a second real implementation
+(Supabase) exists starting this phase, not before.
+
+Responsible ONLY for reading and writing procurement_runs rows -- no
+validation, eligibility, geographic, group-formation, or decision logic
+belongs anywhere near either implementation. No query in either
+implementation ever branches on decision content.
 """
 
-import json
-import uuid
 from dataclasses import dataclass
-from datetime import datetime, timezone
-from pathlib import Path
-from typing import List, Optional, Union
+from typing import List, Optional, Protocol, runtime_checkable
 
-from backend.api.serialization import to_json_safe
 from backend.models.run_contracts import ProcurementRunInput, ProcurementRunResult
-from backend.persistence.database import DEFAULT_DB_PATH, get_connection, initialize_database
 
 
 @dataclass(frozen=True)
@@ -60,92 +67,48 @@ class StoredRun:
     result: dict
 
 
-class ProcurementRunRepository:
-    """The only component in this project allowed to open a SQL
-    connection for procurement runs. All queries are parameterized (`?`
-    placeholders) -- no SQL is ever built via string interpolation of a
-    caller-supplied value."""
+@runtime_checkable
+class ProcurementRunRepository(Protocol):
+    """The persistence contract every implementation must satisfy. All
+    queries in every implementation are parameterized -- no SQL is ever
+    built via string interpolation of a caller-supplied value.
 
-    def __init__(self, db_path: Union[str, Path] = DEFAULT_DB_PATH):
-        self._db_path = db_path
-        initialize_database(self._db_path)  # idempotent; safe on every construction
+    Deliberately minimal: exactly the three operations the application
+    actually uses today (save/get/list). No `update_run`, `delete_run`,
+    `search_runs`, or pagination exists here -- none is needed by any
+    current code path, and inventing speculative CRUD would contradict
+    this phase's own "keep the interface minimal" instruction.
 
-    def save_run(self, run_input: ProcurementRunInput, run_result: ProcurementRunResult) -> str:
-        """Persist one already-computed run. Never recomputes, never
-        mutates run_input/run_result -- to_json_safe reads them, it does
-        not modify them."""
-        run_id = str(uuid.uuid4())
-        created_at = datetime.now(timezone.utc).isoformat()
-        input_json = json.dumps(to_json_safe(run_input))
-        result_json = json.dumps(to_json_safe(run_result))
+    Phase 8F: every method takes `user_id` as its first parameter -- the
+    verified identity a caller (backend/api/routes/procurement.py) must
+    obtain from `get_current_user()` and pass through explicitly. Ownership
+    filtering happens INSIDE each implementation's own query (`WHERE
+    user_id = ...`), not by fetching first and checking after -- see
+    sqlite_repository.py/supabase_repository.py. `save_run` writes
+    `user_id` as the row's owner; `get_run`/`list_runs` never return a row
+    that does not belong to the given `user_id` (a legacy row with a NULL
+    `user_id` -- see Phase 8B -- matches no real `user_id` filter and is
+    therefore never returned to any authenticated caller)."""
 
-        conn = get_connection(self._db_path)
-        try:
-            conn.execute(
-                """
-                INSERT INTO procurement_runs (
-                    run_id, created_at, commodity, run_status,
-                    eligible_vendor_count, candidate_group_count, selected_group_count,
-                    input_json, result_json
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    run_id, created_at, run_result.commodity_id, run_result.run_status,
-                    run_result.eligible_vendor_count, run_result.candidate_group_count,
-                    run_result.selected_group_count, input_json, result_json,
-                ),
-            )
-            conn.commit()
-        finally:
-            conn.close()
-        return run_id
+    def save_run(self, user_id: str, run_input: ProcurementRunInput, run_result: ProcurementRunResult) -> str:
+        """Persist one already-computed run, owned by `user_id`. Never
+        recomputes, never mutates run_input/run_result. Returns the new
+        run's ID."""
+        ...
 
-    def get_run(self, run_id: str) -> Optional[StoredRun]:
-        """Returns the stored run, or None -- a clear, typed,
-        repository-level "not found" signal. Never lets a raw
-        sqlite3.Error escape for a simple missing-row case."""
-        conn = get_connection(self._db_path)
-        try:
-            row = conn.execute(
-                "SELECT run_id, created_at, commodity, run_status, input_json, result_json "
-                "FROM procurement_runs WHERE run_id = ?",
-                (run_id,),
-            ).fetchone()
-        finally:
-            conn.close()
+    def get_run(self, user_id: str, run_id: str) -> Optional[StoredRun]:
+        """Returns the stored run, but ONLY if it is owned by `user_id` --
+        otherwise None, identically to a genuinely nonexistent run_id (a
+        clear, typed, repository-level "not found" signal that
+        deliberately does not distinguish "does not exist" from "exists
+        but belongs to someone else", per this phase's own IDOR-avoidance
+        requirement). Must never let a raw database driver error
+        masquerade as "not found"; only a genuinely absent/not-owned row
+        returns None."""
+        ...
 
-        if row is None:
-            return None
-
-        return StoredRun(
-            run_id=row["run_id"],
-            created_at=row["created_at"],
-            commodity=row["commodity"],
-            run_status=row["run_status"],
-            input=json.loads(row["input_json"]),
-            result=json.loads(row["result_json"]),
-        )
-
-    def list_runs(self, limit: Optional[int] = None) -> List[RunSummary]:
+    def list_runs(self, user_id: str, limit: Optional[int] = None) -> List[RunSummary]:
         """Newest first (created_at descending, run_id descending as a
-        deterministic tie-break for runs saved within the same
-        microsecond). Metadata columns only -- never input_json/result_json."""
-        query = (
-            "SELECT run_id, created_at, commodity, run_status FROM procurement_runs "
-            "ORDER BY created_at DESC, run_id DESC"
-        )
-        params: tuple = ()
-        if limit is not None:
-            query += " LIMIT ?"
-            params = (limit,)
-
-        conn = get_connection(self._db_path)
-        try:
-            rows = conn.execute(query, params).fetchall()
-        finally:
-            conn.close()
-
-        return [
-            RunSummary(run_id=r["run_id"], created_at=r["created_at"], commodity=r["commodity"], run_status=r["run_status"])
-            for r in rows
-        ]
+        deterministic tie-break), filtered to runs owned by `user_id`
+        only. Metadata columns only -- never input_json/result_json."""
+        ...

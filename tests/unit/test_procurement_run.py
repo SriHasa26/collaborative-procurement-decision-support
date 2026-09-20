@@ -12,6 +12,7 @@ prove the orchestrator's output matches them exactly rather than computing
 anything independently.
 """
 
+from backend.api.schemas import ProcurementAnalysisRequest, build_run_input
 from backend.models.run_contracts import ProcurementRunInput, ProcurementRunResult, RunStatus
 from backend.services.batch_decision import run_procurement_decision
 from backend.services.group_formation import form_candidate_groups
@@ -204,3 +205,86 @@ def test_invalid_context_short_circuits_before_any_vendor_processing():
     assert result.eligible_vendor_count == 0
     assert result.group_formation is None
     assert result.final_selection is None
+
+
+# --- Regression: the real, historically-persisted POTATO_HYD_2026_09 run ---
+# A bug report once claimed this scenario had regressed to DO_NOT_BUY_TOGETHER
+# after a frontend redesign. Investigation (through the actual UI via
+# Playwright, capturing the real POST /procurement/analyze payload) proved
+# the frontend payload builder and this service are both byte-for-byte
+# unchanged and correct; the "regression" was two mis-transcribed values in
+# the bug report itself (wholesale_price of 12 instead of the real -4, and
+# GUDIMALKAPUR_POTATO_01's demand of 30 instead of the real 33 kg/day),
+# confirmed against the actual persisted run's stored input/result JSON.
+# This test locks in the real historical input -> the real historical
+# result (4 vendors, 11 candidate groups, BUY_TOGETHER, Rs 3,732.60 savings)
+# so a *genuine* future change to compatibility/economics/selection would be
+# caught here, rather than being confused with this kind of data-entry drift
+# again. Goes through ProcurementAnalysisRequest/build_run_input (the same
+# API schema layer backend/api/routes/procurement.py uses), not a hand-built
+# ProcurementRunInput, so it also guards the request-schema conversion.
+def test_potato_hyd_2026_09_known_good_scenario_matches_historical_baseline():
+    payload = {
+        "commodity": {"commodity_id": "POTATO_HYD_2026_09", "freshness_window_days": 7, "moq_kg": 50},
+        "context": {
+            "commodity_id": "POTATO_HYD_2026_09",
+            "date": "2026-09-13",
+            "wholesale_price": {"value_rs_per_kg": -4.0, "geographic_level": "MANDI_LEVEL"},
+        },
+        "vendor_submissions": [
+            {
+                "vendor_id": "BOWENPALLY_POTATO_01",
+                "location": {"status": "VENDOR_SPECIFIC_APPROXIMATE", "lat": 17.469245, "lon": 78.494895},
+                "individual_price_rs_per_kg": 11,
+                "practical_horizon_days": 3,
+                "user_provided_q_i": 25,
+                "diary_records": None,
+                "peer_q_values": None,
+            },
+            {
+                "vendor_id": "GUDIMALKAPUR_POTATO_01",
+                "location": {"status": "VENDOR_SPECIFIC_APPROXIMATE", "lat": 17.3871, "lon": 78.43911},
+                "individual_price_rs_per_kg": 12,
+                "practical_horizon_days": 3,
+                "user_provided_q_i": 33,
+                "diary_records": None,
+                "peer_q_values": None,
+            },
+            {
+                "vendor_id": "MEHDIPATNAM_POTATO_01",
+                "location": {"status": "VENDOR_SPECIFIC_APPROXIMATE", "lat": 17.39508, "lon": 78.44113},
+                "individual_price_rs_per_kg": 16,
+                "practical_horizon_days": 3,
+                "user_provided_q_i": 20,
+                "diary_records": None,
+                "peer_q_values": None,
+            },
+            {
+                "vendor_id": "ERRAGADDA_POTATO_01",
+                "location": {"status": "VENDOR_SPECIFIC_APPROXIMATE", "lat": 17.45164, "lon": 78.43521},
+                "individual_price_rs_per_kg": 16,
+                "practical_horizon_days": 3,
+                "user_provided_q_i": 25,
+                "diary_records": None,
+                "peer_q_values": None,
+            },
+        ],
+        "config": {"d_max_km": 12, "trader_margin": 0.1, "transport_tiers": [{"capacity_kg": 1000, "cost_rs": 1800}]},
+    }
+
+    run_input = build_run_input(ProcurementAnalysisRequest(**payload))
+    result = ProcurementRunService().run(run_input)
+
+    assert result.run_status == RunStatus.COMPLETED.value
+    assert result.total_vendors_submitted == 4
+    assert result.eligible_vendor_count == 4
+    assert result.candidate_group_count == 11
+    assert result.selected_group_count == 1
+    assert result.final_selection.total_savings_rs == 3732.6000000000004
+    assert set(result.final_selection.selected_results[0].vendor_ids) == {
+        "BOWENPALLY_POTATO_01",
+        "ERRAGADDA_POTATO_01",
+        "GUDIMALKAPUR_POTATO_01",
+        "MEHDIPATNAM_POTATO_01",
+    }
+    assert result.final_selection.selected_results[0].decision.decision_state == "BUY_TOGETHER"
